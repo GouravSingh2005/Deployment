@@ -1,29 +1,30 @@
-
-FROM oven/bun:1
-WORKDIR /usr/src/app
-
+# Accept DATABASE_URL as a build argument
 ARG DATABASE_URL
 
+# Set DATABASE_URL as an environment variable for Prisma to use
 ENV DATABASE_URL=${DATABASE_URL}
 
+# Install OpenSSL (if needed)
+RUN apt-get update -y && apt-get install -y openssl
 
+# Copy your project files
 COPY ./packages ./packages
 COPY ./bun.lock ./bun.lock
 COPY ./package.json ./package.json
 COPY ./turbo.json ./turbo.json
 COPY ./apps/web ./apps/web
 
-
+# Install dependencies
 RUN bun install
 
+# Run Prisma DB migrations (this will use DATABASE_URL from environment)
+RUN bun run prisma migrate deploy
 
-RUN bun run db:generate
-
-
+# Build the project
 RUN bun run build
 
-
+# Expose the application on port 3000
 EXPOSE 3000
 
-
+# Start the web app
 CMD [ "bun", "run", "start:web" ]
