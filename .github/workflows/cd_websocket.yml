@@ -27,4 +27,4 @@ jobs:
           context: .
           file: ./Docker/Dockerfile.ws
           push: true
-          tags: gourav/todo-app-ws:${{ github.sha }}
+          tags: gourav9211/todo-app-ws:${{ github.sha }}
